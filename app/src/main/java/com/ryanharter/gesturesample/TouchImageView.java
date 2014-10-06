@@ -5,19 +5,14 @@ import android.graphics.Matrix;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 /**
  * Special case of an ImageView that reacts to touch feedback for
  * things like scale and translation.
  */
-public class TouchImageView extends FrameLayout
+public class TouchImageView extends ImageView
         implements ScaleGestureDetector.OnScaleGestureListener {
-
-    /** Our internal image view, to leverage other's code. */
-    private ImageView mImageView;
 
     /** The custom gesture detector we use to track scaling. */
     private ScaleGestureDetector mScaleDetector;
@@ -28,24 +23,11 @@ public class TouchImageView extends FrameLayout
     public TouchImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        // Create an ImageView with a matrix scale type, then add it
-        // as a child view.
-        mImageView = new ImageView(context, attrs);
-        mImageView.setScaleType(ImageView.ScaleType.MATRIX);
-        mImageView.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
-        addView(mImageView);
+        // Set the scale type to MATRIX so that the scaling works.
+        setScaleType(ScaleType.MATRIX);
 
         // Add a scale GestureDetector, with this as the listener.
         mScaleDetector = new ScaleGestureDetector(context, this);
-    }
-
-    /*
-     * Simple convenient setter to set the image resource.
-     */
-    public void setImageResource(int resId) {
-        mImageView.setImageResource(resId);
     }
 
     @Override public boolean onTouchEvent(MotionEvent event) {
@@ -69,9 +51,9 @@ public class TouchImageView extends FrameLayout
         mScaleValue *= detector.getScaleFactor();
 
         // Set the image matrix scale
-        Matrix m = new Matrix(mImageView.getImageMatrix());
+        Matrix m = new Matrix(getImageMatrix());
         m.setScale(mScaleValue, mScaleValue);
-        mImageView.setImageMatrix(m);
+        setImageMatrix(m);
 
         return true;
     }
